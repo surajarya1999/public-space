@@ -25,7 +25,7 @@ export default function ProfilePage() {
   const totalLikes = myPosts.reduce((sum, p) => sum + p.likedBy.length, 0);
 
   function handleSave() {
-    if (!name.trim()) return;
+    if (!name.trim() || !currentUser) return;
     updateUser({ ...currentUser, name: name.trim(), bio: bio.trim() });
     setEditing(false);
   }

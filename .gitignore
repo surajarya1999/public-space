@@ -1,0 +1,10 @@
+# dependencies
+/node_modules
+/dist
+.env.local
+
+# next.js
+/.next
+/out/
+
+

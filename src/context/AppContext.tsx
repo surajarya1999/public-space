@@ -1,12 +1,12 @@
+"use client";
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
-// ─── Types ───────────────────────────────────────────────────────────────────
-
+// --- Types ---
 export interface User {
   id: string;
   name: string;
   handle: string;
-  avatar: string; // initials
+  avatar: string; 
   bio: string;
   friendIds: string[];
   postsToday: number;
@@ -29,8 +29,8 @@ export interface Post {
   authorAvatar: string;
   authorFriendCount: number;
   content: string;
-  imageUrl?: string;     // seed post external URL
-  mediaUrl?: string;     // Cloudinary URL (uploaded files)
+  imageUrl?: string;
+  mediaUrl?: string;
   mediaType?: "image" | "video";
   likedBy: string[];
   comments: Comment[];
@@ -39,30 +39,24 @@ export interface Post {
 }
 
 interface AppContextType {
-  // Auth
   currentUser: User | null;
   allUsers: User[];
-  login: (handle: string, password: string) => string | null; // returns error or null
+  login: (handle: string, password: string) => string | null;
   register: (name: string, handle: string, password: string) => string | null;
   logout: () => void;
   updateUser: (updated: User) => void;
-
-  // Posts
   posts: Post[];
   addPost: (content: string, mediaDataUrl?: string, mediaType?: "image" | "video") => string | null;
   toggleLike: (postId: string) => void;
   addComment: (postId: string, text: string) => void;
   sharePost: (postId: string) => void;
   getPostingInfo: () => { canPost: boolean; reason: string; remaining: number | "unlimited" };
-
-  // Friends
   addFriend: (targetId: string) => void;
   removeFriend: (targetId: string) => void;
   isFriend: (targetId: string) => boolean;
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
+// --- Helpers ---
 function today() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -80,11 +74,10 @@ function getPostLimit(friendCount: number): number | "unlimited" | "blocked" {
   if (friendCount === 1) return 1;
   if (friendCount === 2) return 2;
   if (friendCount > 10) return "unlimited";
-  return friendCount; // 3–10: equal to friend count
+  return friendCount;
 }
 
-// ─── Seed data ───────────────────────────────────────────────────────────────
-
+// --- Seed data ---
 const SEED_USERS: User[] = [
   { id: "u1", name: "Aisha Khan", handle: "aishak", avatar: "AK", bio: "Photographer & traveler 📸", friendIds: ["u2", "u3"], postsToday: 0, lastPostDate: today() },
   { id: "u2", name: "Bilal Shah", handle: "bilals", avatar: "BS", bio: "Tech enthusiast & chai lover ☕", friendIds: ["u1"], postsToday: 0, lastPostDate: today() },
@@ -107,19 +100,19 @@ const SEED_POSTS: Post[] = [
     imageUrl: "https://picsum.photos/seed/lahore1/800/450",
     likedBy: ["u1", "u2", "u4"], comments: [
       { id: "c1", authorId: "u1", authorName: "Aisha Khan", authorAvatar: "AK", text: "Absolutely stunning! 😍", createdAt: "2025-03-13T08:00:00Z" },
-      { id: "c2", authorId: "u2", authorName: "Bilal Shah", authorAvatar: "BS", text: "Lahore ki shaan! 🔥", createdAt: "2025-03-13T08:05:00Z" },
+      { id: "c2", authorId: "u2", authorName: "Bilal Shah", authorAvatar: "BS", text: "Stunning shot! 🔥", createdAt: "2025-03-13T08:05:00Z" },
     ], shares: 12, createdAt: "2025-03-13T07:30:00Z",
   },
   {
     id: "p2", authorId: "u1", authorName: "Aisha Khan", authorAvatar: "AK", authorFriendCount: 2,
-    content: "Just hit 2 friends on PublicSpace which means 2 posts a day now! 🎉 This reward system is so motivating. Who else is grinding up the tiers?",
+    content: "Just reached 2 friends on PublicSpace which means 2 posts a day now! 🎉 This system is so motivating. Who else is leveling up?",
     likedBy: ["u3", "u4", "u5", "u6"], comments: [
       { id: "c3", authorId: "u3", authorName: "Zara Hussain", authorAvatar: "ZH", text: "Keep going! 10+ friends = unlimited 🚀", createdAt: "2025-03-13T09:00:00Z" },
     ], shares: 3, createdAt: "2025-03-13T08:45:00Z",
   },
   {
     id: "p3", authorId: "u8", authorName: "Saad Rauf", authorAvatar: "SR", authorFriendCount: 11,
-    content: "Week 4 of building in public 📊 Revenue up 23%, churn down 8%. Community feedback has been invaluable. Thank you all for the support and honest reviews — this platform is special.",
+    content: "Week 4 of building in public 📊 Revenue up 23%, churn down 8%. Community feedback has been invaluable. Thank you all for the support!",
     likedBy: ["u1", "u2", "u3", "u7", "u9"], comments: [], shares: 19, createdAt: "2025-03-13T06:00:00Z",
   },
   {
@@ -128,7 +121,7 @@ const SEED_POSTS: Post[] = [
     imageUrl: "https://picsum.photos/seed/art99/800/450",
     likedBy: ["u3", "u5", "u6", "u10", "u11", "u12"], comments: [
       { id: "c4", authorId: "u5", authorName: "Fatima Ahmed", authorAvatar: "FA", text: "This is GORGEOUS 😭✨", createdAt: "2025-03-13T07:00:00Z" },
-      { id: "c5", authorId: "u7", authorName: "Nadia Tariq", authorAvatar: "NT", text: "Please sell prints!", createdAt: "2025-03-13T07:10:00Z" },
+      { id: "c5", authorId: "u7", authorName: "Nadia Tariq", authorAvatar: "NT", text: "Stunning!", createdAt: "2025-03-13T07:10:00Z" },
     ], shares: 31, createdAt: "2025-03-13T05:00:00Z",
   },
 ];
@@ -140,8 +133,7 @@ const SEED_PASSWORDS: Record<string, string> = {
   kamranj: "demo123", rabianr: "demo123", usmang: "demo123",
 };
 
-// ─── Context ─────────────────────────────────────────────────────────────────
-
+// --- Context ---
 const AppContext = createContext<AppContextType | null>(null);
 
 export function AppProvider({ children }: { children: ReactNode }) {
@@ -150,7 +142,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [passwords, setPasswords] = useState<Record<string, string>>({});
 
-  // Load from localStorage on mount
   useEffect(() => {
     const storedUsers = localStorage.getItem("ps_users");
     const storedPosts = localStorage.getItem("ps_posts");
@@ -167,12 +158,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     if (storedCurrentUser) {
       const cu = JSON.parse(storedCurrentUser);
-      // refresh from allUsers
       const fresh = users.find((u: User) => u.id === cu.id);
       if (fresh) setCurrentUser(fresh);
     }
 
-    // Initialize seed data if first time
     if (!storedUsers) localStorage.setItem("ps_users", JSON.stringify(SEED_USERS));
     if (!storedPosts) localStorage.setItem("ps_posts", JSON.stringify(SEED_POSTS));
     if (!storedPasswords) localStorage.setItem("ps_passwords", JSON.stringify(SEED_PASSWORDS));
@@ -191,10 +180,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   function login(handle: string, password: string): string | null {
     const h = handle.trim().toLowerCase();
     const user = allUsers.find((u) => u.handle === h);
-    if (!user) return "Account nahi mila. Pehle register karo.";
-    if (passwords[h] !== password) return "Password galat hai.";
+    if (!user) return "Account not found. Please register first.";
+    if (passwords[h] !== password) return "Incorrect password.";
 
-    // Reset postsToday if new day
     let u = { ...user };
     if (u.lastPostDate !== today()) {
       u = { ...u, postsToday: 0, lastPostDate: today() };
@@ -209,10 +197,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   function register(name: string, handle: string, password: string): string | null {
     const h = handle.trim().toLowerCase().replace(/\s+/g, "");
-    if (!name.trim()) return "Naam daalo.";
-    if (h.length < 3) return "Handle kam se kam 3 characters ka hona chahiye.";
-    if (password.length < 6) return "Password kam se kam 6 characters ka hona chahiye.";
-    if (allUsers.find((u) => u.handle === h)) return "Yeh handle pehle se liya hua hai.";
+    if (!name.trim()) return "Please enter your name.";
+    if (h.length < 3) return "Handle must be at least 3 characters.";
+    if (password.length < 6) return "Password must be at least 6 characters.";
+    if (allUsers.find((u) => u.handle === h)) return "This handle is already taken.";
 
     const newUser: User = {
       id: uid(), name: name.trim(), handle: h,
@@ -245,9 +233,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }
 
   function getPostingInfo() {
-    if (!currentUser) return { canPost: false, reason: "Login karo pehle", remaining: 0 };
+    if (!currentUser) return { canPost: false, reason: "Please login first", remaining: 0 };
 
-    // Reset if new day
     let user = currentUser;
     if (user.lastPostDate !== today()) {
       user = { ...user, postsToday: 0, lastPostDate: today() };
@@ -257,23 +244,23 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const limit = getPostLimit(user.friendIds.length);
 
     if (limit === "blocked") {
-      return { canPost: false, reason: "Kam se kam 1 friend banao posting ke liye", remaining: 0 };
+      return { canPost: false, reason: "Add at least 1 friend to start posting", remaining: 0 };
     }
     if (limit === "unlimited") {
-      return { canPost: true, reason: "Unlimited posts ✦", remaining: "unlimited" as const };
+      return { canPost: true, reason: "Unlimited posts unlocked ✦", remaining: "unlimited" as const };
     }
     const remaining = Math.max(0, limit - user.postsToday);
     return {
       canPost: remaining > 0,
       reason: remaining > 0
-        ? `Aaj ${remaining} post${remaining > 1 ? "s" : ""} bachi hain`
-        : "Aaj ka limit khatam — zyada friends banao!",
+        ? `You have ${remaining} post${remaining > 1 ? "s" : ""} left today`
+        : "Daily limit reached — add more friends for a higher limit!",
       remaining,
     };
   }
 
   function addPost(content: string, mediaDataUrl?: string, mediaType?: "image" | "video"): string | null {
-    if (!currentUser) return "Pehle login karo.";
+    if (!currentUser) return "Please login first.";
     const info = getPostingInfo();
     if (!info.canPost) return info.reason;
 
@@ -347,7 +334,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const updatedUser = { ...currentUser, friendIds: [...currentUser.friendIds, targetId] };
     updateUser(updatedUser);
 
-    // Also make the other user add back (mutual)
     const target = allUsers.find((u) => u.id === targetId);
     if (target && !target.friendIds.includes(currentUser.id)) {
       const updatedTarget = { ...target, friendIds: [...target.friendIds, currentUser.id] };

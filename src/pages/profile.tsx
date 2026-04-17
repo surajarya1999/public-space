@@ -1,3 +1,4 @@
+"use client";
 import Head from "next/head";
 import { useState } from "react";
 import { useApp } from "@/context/AppContext";
@@ -15,7 +16,7 @@ export default function ProfilePage() {
     return (
       <div className="max-w-md mx-auto px-4 py-20 text-center">
         <p className="text-3xl mb-3">◈</p>
-        <p className="font-semibold mb-2" style={{ fontFamily: "'Syne',sans-serif" }}>Profile dekhne ke liye login karo</p>
+        <p className="font-semibold mb-2" style={{ fontFamily: "'Syne',sans-serif" }}>Please login to view your profile</p>
         <button onClick={() => router.push("/auth")} className="btn-primary px-6 py-2 mt-2">Login →</button>
       </div>
     );
@@ -60,7 +61,7 @@ export default function ProfilePage() {
                 <input value={name} onChange={(e) => setName(e.target.value)}
                   className="rounded-lg px-3 py-1.5 text-sm outline-none"
                   style={{ background: "var(--surface2)", border: "1px solid var(--accent)", color: "var(--text)", fontFamily: "'Syne',sans-serif" }} />
-                <input value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Apna bio likho..."
+                <input value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Write your bio..."
                   className="rounded-lg px-3 py-1.5 text-sm outline-none"
                   style={{ background: "var(--surface2)", border: "1px solid var(--border)", color: "var(--text)", fontFamily: "'DM Sans',sans-serif" }} />
               </div>
@@ -95,8 +96,8 @@ export default function ProfilePage() {
           {[
             { label: "Friends", value: friendCount },
             { label: "Posts", value: myPosts.length },
-            { label: "Likes Mile", value: totalLikes },
-            { label: "Aaj Post", value: currentUser.postsToday },
+            { label: "Likes Received", value: totalLikes },
+            { label: "Posts Today", value: currentUser.postsToday },
           ].map((s) => (
             <div key={s.label} className="card p-3 text-center">
               <p className="text-xl font-bold gradient-text" style={{ fontFamily: "'Syne',sans-serif" }}>{s.value}</p>
@@ -124,17 +125,17 @@ export default function ProfilePage() {
 
         {/* My posts */}
         <h2 className="text-sm font-bold mb-4 uppercase tracking-widest" style={{ color: "var(--muted)", fontFamily: "'Syne',sans-serif" }}>
-          Meri Posts ({myPosts.length})
+          My Posts ({myPosts.length})
         </h2>
 
         {myPosts.length === 0 ? (
           <div className="card p-10 text-center">
             <p className="text-3xl mb-3">📝</p>
-            <p className="font-semibold mb-1" style={{ fontFamily: "'Syne',sans-serif" }}>Abhi tak koi post nahi</p>
+            <p className="font-semibold mb-1" style={{ fontFamily: "'Syne',sans-serif" }}>No posts yet</p>
             <p className="text-sm mb-4" style={{ color: "var(--muted)", fontFamily: "'DM Sans',sans-serif" }}>
-              Feed par jao aur apni pehli post karo!
+              Go to the feed and share your first post!
             </p>
-            <a href="/" className="btn-primary text-sm px-5 py-2 inline-block">Feed par jao →</a>
+            <a href="/" className="btn-primary text-sm px-5 py-2 inline-block">Go to Feed →</a>
           </div>
         ) : (
           <div className="flex flex-col gap-4">

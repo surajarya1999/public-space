@@ -1,3 +1,4 @@
+"use client";
 import Head from "next/head";
 import { useApp } from "@/context/AppContext";
 import { useRouter } from "next/router";
@@ -8,6 +9,7 @@ const AVATAR_GRADIENTS = [
   "linear-gradient(135deg,#6dffcc,#7c6dff)",
   "linear-gradient(135deg,#ffd166,#6dffcc)",
 ];
+
 function ag(id: string) {
   return AVATAR_GRADIENTS[id.charCodeAt(id.length - 1) % AVATAR_GRADIENTS.length];
 }
@@ -20,9 +22,9 @@ export default function FriendsPage() {
     return (
       <div className="max-w-md mx-auto px-4 py-20 text-center">
         <p className="text-3xl mb-3">👥</p>
-        <p className="font-semibold mb-2" style={{ fontFamily: "'Syne',sans-serif" }}>Friends dekho</p>
+        <p className="font-semibold mb-2" style={{ fontFamily: "'Syne',sans-serif" }}>View Friends</p>
         <p className="text-sm mb-4" style={{ color: "var(--muted)", fontFamily: "'DM Sans',sans-serif" }}>
-          Pehle login karo friends dekhne ke liye
+          Please login first to see and manage your friends list.
         </p>
         <button onClick={() => router.push("/auth")} className="btn-primary px-6 py-2">Login →</button>
       </div>
@@ -34,10 +36,10 @@ export default function FriendsPage() {
   const totalFriends = currentUser.friendIds.length;
 
   const TIERS = [
-    { friends: "0", icon: "🔒", label: "0 friends", detail: "Post nahi kar sakte", color: "#ff6d8a", active: totalFriends === 0 },
+    { friends: "0", icon: "🔒", label: "0 friends", detail: "Posting disabled", color: "#ff6d8a", active: totalFriends === 0 },
     { friends: "1", icon: "✦", label: "1 friend", detail: "1 post per day", color: "#ffd166", active: totalFriends === 1 },
-    { friends: "2–10", icon: "✦✦", label: "2–10 friends", detail: "Friends ke barabar posts", color: "#7c6dff", active: totalFriends >= 2 && totalFriends <= 10 },
-    { friends: "10+", icon: "∞", label: "10+ friends", detail: "Unlimited posts!", color: "#6dffcc", active: totalFriends > 10 },
+    { friends: "2–10", icon: "✦✦", label: "2–10 friends", detail: "Posts equal to friend count", color: "#7c6dff", active: totalFriends >= 2 && totalFriends <= 10 },
+    { friends: "10+", icon: "∞", label: "10+ friends", detail: "Unlimited posts unlocked!", color: "#6dffcc", active: totalFriends > 10 },
   ];
 
   return (
@@ -48,8 +50,8 @@ export default function FriendsPage() {
         <div className="mb-6">
           <h1 className="text-3xl font-bold gradient-text mb-1" style={{ fontFamily: "'Syne',sans-serif" }}>Friends</h1>
           <p style={{ color: "var(--muted)", fontFamily: "'DM Sans',sans-serif" }}>
-            Aapke <span style={{ color: "var(--accent)", fontWeight: 600 }}>{totalFriends} friend{totalFriends !== 1 ? "s" : ""}</span> hain
-            {totalFriends < 10 && ` — ${10 - totalFriends} aur banao unlimited unlock karo!`}
+            You have <span style={{ color: "var(--accent)", fontWeight: 600 }}>{totalFriends} friend{totalFriends !== 1 ? "s" : ""}</span>
+            {totalFriends < 10 && ` — Make ${10 - totalFriends} more to unlock unlimited posting!`}
           </p>
         </div>
 
@@ -72,7 +74,7 @@ export default function FriendsPage() {
                     </p>
                     <p className="text-xs" style={{ color: "var(--muted)" }}>{tier.detail}</p>
                   </div>
-                  {tier.active && <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: `${tier.color}20`, color: tier.color }}>Aap</span>}
+                  {tier.active && <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: `${tier.color}20`, color: tier.color }}>You</span>}
                 </div>
               ))}
             </div>
@@ -82,7 +84,7 @@ export default function FriendsPage() {
                 Progress
               </h2>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm" style={{ color: "var(--muted)" }}>Unlimited tak</span>
+                <span className="text-sm" style={{ color: "var(--muted)" }}>To Unlimited</span>
                 <span className="text-sm font-bold" style={{ color: "var(--accent3)", fontFamily: "'Syne',sans-serif" }}>{totalFriends}/10</span>
               </div>
               <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--surface2)" }}>
@@ -90,7 +92,7 @@ export default function FriendsPage() {
                   style={{ width: `${Math.min((totalFriends / 10) * 100, 100)}%`, background: "linear-gradient(90deg,#7c6dff,#6dffcc)" }} />
               </div>
               <p className="text-xs mt-2" style={{ color: "var(--muted)" }}>
-                {totalFriends >= 10 ? "🎉 Unlimited posts unlock!" : `${10 - totalFriends} aur friends chahiye`}
+                {totalFriends >= 10 ? "🎉 Unlimited posts unlocked!" : `Need ${10 - totalFriends} more friends`}
               </p>
             </div>
           </div>
@@ -102,7 +104,7 @@ export default function FriendsPage() {
             {myFriends.length > 0 && (
               <div className="card p-5">
                 <h2 className="text-sm font-bold mb-4" style={{ fontFamily: "'Syne',sans-serif" }}>
-                  Mere Friends ({myFriends.length})
+                  My Friends ({myFriends.length})
                 </h2>
                 <div className="flex flex-col gap-3">
                   {myFriends.map((friend) => (
@@ -129,11 +131,11 @@ export default function FriendsPage() {
             {/* Suggestions */}
             <div className="card p-5">
               <h2 className="text-sm font-bold mb-4" style={{ fontFamily: "'Syne',sans-serif" }}>
-                Log Jo Tum Jante Ho ({suggestions.length})
+                People You May Know ({suggestions.length})
               </h2>
               {suggestions.length === 0 ? (
                 <p className="text-sm text-center py-4" style={{ color: "var(--muted)", fontFamily: "'DM Sans',sans-serif" }}>
-                  🎉 Sab se dost ban gaye!
+                  🎉 You are friends with everyone!
                 </p>
               ) : (
                 <div className="flex flex-col gap-3">

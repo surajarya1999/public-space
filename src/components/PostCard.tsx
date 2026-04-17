@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { useApp, Post, Comment } from "@/context/AppContext";
 import { useRouter } from "next/router";
@@ -9,11 +10,11 @@ interface PostCardProps {
 function timeAgo(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
   const m = Math.floor(diff / 60000);
-  if (m < 1) return "Abhi abhi";
-  if (m < 60) return `${m} minute pehle`;
+  if (m < 1) return "Just now"; // 'Abhi abhi' -> 'Just now'
+  if (m < 60) return `${m}m ago`; // minute pehle -> m ago
   const h = Math.floor(m / 60);
-  if (h < 24) return `${h} ghante pehle`;
-  return `${Math.floor(h / 24)} din pehle`;
+  if (h < 24) return `${h}h ago`; // ghante pehle -> h ago
+  return `${Math.floor(h / 24)}d ago`; // din pehle -> d ago
 }
 
 const AVATAR_GRADIENTS = [
@@ -78,7 +79,7 @@ export default function PostCard({ post }: PostCardProps) {
           <div className="flex items-center gap-2 flex-wrap">
             <span className="font-semibold text-sm" style={{ fontFamily: "'Syne',sans-serif" }}>{post.authorName}</span>
             {currentUser?.id === post.authorId && (
-              <span className="text-xs px-1.5 py-0.5 rounded" style={{ background: "rgba(124,109,255,0.15)", color: "var(--accent)", fontSize: "0.65rem" }}>Aap</span>
+              <span className="text-xs px-1.5 py-0.5 rounded" style={{ background: "rgba(124,109,255,0.15)", color: "var(--accent)", fontSize: "0.65rem" }}>You</span> // 'Aap' -> 'You'
             )}
             <span className="text-xs px-2 py-0.5 rounded-full" style={{ color: tier.color, background: tier.bg, border: `1px solid ${tier.color}30` }}>
               {tier.label}
@@ -157,7 +158,7 @@ export default function PostCard({ post }: PostCardProps) {
                 {currentUser.avatar}
               </div>
               <input value={commentText} onChange={(e) => setCommentText(e.target.value)}
-                placeholder="Comment likho..." className="flex-1 rounded-xl px-3 py-2 text-sm outline-none"
+                placeholder="Write a comment..." className="flex-1 rounded-xl px-3 py-2 text-sm outline-none" // 'Comment likho' -> 'Write a comment'
                 style={{ background: "var(--surface2)", border: "1px solid var(--border)", color: "var(--text)", fontFamily: "'DM Sans',sans-serif" }}
                 onFocus={(e) => (e.target.style.borderColor = "var(--accent)")}
                 onBlur={(e) => (e.target.style.borderColor = "var(--border)")} />
@@ -165,7 +166,7 @@ export default function PostCard({ post }: PostCardProps) {
             </form>
           ) : (
             <p className="text-xs text-center py-2" style={{ color: "var(--muted)", fontFamily: "'DM Sans',sans-serif" }}>
-              <button onClick={() => router.push("/auth")} style={{ color: "var(--accent)" }}>Login karo</button> comment karne ke liye
+              Please <button onClick={() => router.push("/auth")} style={{ color: "var(--accent)" }}>Login</button> to add a comment. // 'Login karo... comment karne ke liye'
             </p>
           )}
         </div>

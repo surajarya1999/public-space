@@ -22,7 +22,7 @@ export default function ExplorePage() {
       </Head>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
-        {/* Header */}
+        {/* Page Header */}
         <div className="mb-8">
           <h1
             className="text-3xl font-bold gradient-text mb-2"
@@ -31,24 +31,24 @@ export default function ExplorePage() {
             Explore
           </h1>
           <p style={{ color: "var(--muted)", fontFamily: "'DM Sans', sans-serif" }}>
-            Discover trending content from the community
+            Discover trending content and popular creators
           </p>
         </div>
 
-        {/* Search */}
+        {/* Search Bar */}
         <div
           className="flex items-center gap-3 rounded-2xl px-5 py-4 mb-8"
           style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
         >
           <span style={{ color: "var(--muted)" }}>🔍</span>
           <input
-            placeholder="Search posts, people, tags..."
+            placeholder="Search for posts, people, or tags..."
             className="flex-1 bg-transparent outline-none text-sm"
             style={{ color: "var(--text)", fontFamily: "'DM Sans', sans-serif" }}
           />
         </div>
 
-        {/* Trending tags */}
+        {/* Trending Tags Section */}
         <div className="mb-8">
           <h2
             className="text-xs font-semibold uppercase tracking-widest mb-3"
@@ -74,7 +74,7 @@ export default function ExplorePage() {
           </div>
         </div>
 
-        {/* Grid of posts */}
+        {/* Top Posts Feed Header */}
         <div className="mb-4">
           <h2
             className="text-xs font-semibold uppercase tracking-widest mb-4"
@@ -83,6 +83,8 @@ export default function ExplorePage() {
             🔥 Top Posts This Week
           </h2>
         </div>
+
+        {/* Visual Grid of Posts */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {EXPLORE_POSTS.map((post) => (
             <div
@@ -95,6 +97,7 @@ export default function ExplorePage() {
                 alt={`Post by ${post.author}`}
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
+              {/* Overlay with details appearing on hover */}
               <div className="absolute inset-0 flex items-end p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                 style={{ background: "linear-gradient(transparent, rgba(0,0,0,0.7))" }}
               >

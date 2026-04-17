@@ -1,3 +1,4 @@
+"use client";
 import Head from "next/head";
 import { useState } from "react";
 import { useApp } from "@/context/AppContext";
@@ -11,8 +12,8 @@ export default function FeedPage() {
   const filteredPosts = activeFilter === "following" && currentUser
     ? posts.filter((p) => currentUser.friendIds.includes(p.authorId) || p.authorId === currentUser.id)
     : activeFilter === "trending"
-    ? [...posts].sort((a, b) => b.likedBy.length - a.likedBy.length)
-    : posts;
+      ? [...posts].sort((a, b) => b.likedBy.length - a.likedBy.length)
+      : posts;
 
   return (
     <>
@@ -38,7 +39,7 @@ export default function FeedPage() {
                 <div className="grid grid-cols-3 gap-2 text-center">
                   {[
                     { label: "Friends", value: currentUser.friendIds.length },
-                    { label: "Aaj", value: currentUser.postsToday },
+                    { label: "Today", value: currentUser.postsToday },
                     { label: "Posts", value: posts.filter((p) => p.authorId === currentUser.id).length },
                   ].map((s) => (
                     <div key={s.label} className="py-2 rounded-xl" style={{ background: "var(--surface2)" }}>
@@ -51,13 +52,13 @@ export default function FeedPage() {
             ) : (
               <div className="card p-5 text-center">
                 <p className="text-sm mb-3" style={{ color: "var(--muted)", fontFamily: "'DM Sans',sans-serif" }}>
-                  Login karo apni community dekho
+                  Join the community to see what's happening.
                 </p>
                 <a href="/auth" className="btn-primary text-sm px-5 py-2 inline-block">Login →</a>
               </div>
             )}
 
-            {/* Posting tiers card */}
+            {/* Posting Tiers Section */}
             <div className="card p-5">
               <h3 className="text-xs font-semibold uppercase tracking-widest mb-3"
                 style={{ color: "var(--muted)", fontFamily: "'Syne',sans-serif" }}>
@@ -71,9 +72,9 @@ export default function FeedPage() {
               ].map((tier) => {
                 const isActive = currentUser &&
                   ((tier.f === 0 && currentUser.friendIds.length === 0) ||
-                  (tier.f === 1 && currentUser.friendIds.length === 1) ||
-                  (tier.f === 2 && currentUser.friendIds.length >= 2 && currentUser.friendIds.length <= 10) ||
-                  (tier.f === 11 && currentUser.friendIds.length > 10));
+                    (tier.f === 1 && currentUser.friendIds.length === 1) ||
+                    (tier.f === 2 && currentUser.friendIds.length >= 2 && currentUser.friendIds.length <= 10) ||
+                    (tier.f === 11 && currentUser.friendIds.length > 10));
                 return (
                   <div key={tier.label} className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm mb-1"
                     style={{ background: isActive ? `${tier.color}12` : "transparent", border: isActive ? `1px solid ${tier.color}30` : "1px solid transparent" }}>
@@ -87,11 +88,11 @@ export default function FeedPage() {
             </div>
           </aside>
 
-          {/* Main feed */}
+          {/* Main Feed Content */}
           <div className="lg:col-span-2 flex flex-col gap-5">
             <PostComposer />
 
-            {/* Filters */}
+            {/* Filter Tabs */}
             <div className="flex gap-2">
               {(["all", "trending", "following"] as const).map((tab) => (
                 <button key={tab} onClick={() => setActiveFilter(tab)}
@@ -102,7 +103,7 @@ export default function FeedPage() {
                     background: activeFilter === tab ? "rgba(124,109,255,0.1)" : "transparent",
                     border: activeFilter === tab ? "1px solid rgba(124,109,255,0.25)" : "1px solid transparent",
                   }}>
-                  {tab === "all" ? "Sab Posts" : tab === "trending" ? "🔥 Trending" : "👥 Following"}
+                  {tab === "all" ? "All Posts" : tab === "trending" ? "🔥 Trending" : "👥 Following"}
                 </button>
               ))}
             </div>
@@ -110,9 +111,9 @@ export default function FeedPage() {
             {filteredPosts.length === 0 ? (
               <div className="card p-10 text-center">
                 <p className="text-3xl mb-3">🌐</p>
-                <p className="font-semibold mb-1" style={{ fontFamily: "'Syne',sans-serif" }}>Koi post nahi mili</p>
+                <p className="font-semibold mb-1" style={{ fontFamily: "'Syne',sans-serif" }}>No posts found</p>
                 <p className="text-sm" style={{ color: "var(--muted)", fontFamily: "'DM Sans',sans-serif" }}>
-                  {activeFilter === "following" ? "Pehle kuch friends banao!" : "Pehli post banao!"}
+                  {activeFilter === "following" ? "Follow some friends to see their updates!" : "Be the first to share something with the world!"}
                 </p>
               </div>
             ) : (

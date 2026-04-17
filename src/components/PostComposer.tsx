@@ -1,3 +1,4 @@
+"use client";
 import { useState, useRef } from "react";
 import { useApp } from "@/context/AppContext";
 import { useRouter } from "next/router";
@@ -31,7 +32,7 @@ export default function PostComposer() {
       <div className="card p-6 text-center">
         <p className="text-2xl mb-2">👋</p>
         <p className="text-sm mb-3" style={{ color: "var(--muted)", fontFamily: "'DM Sans',sans-serif" }}>
-          Posting ke liye pehle login karo
+          Please login to start posting.
         </p>
         <button onClick={() => router.push("/auth")} className="btn-primary text-sm px-6 py-2">
           Login / Register →
@@ -70,7 +71,7 @@ export default function PostComposer() {
       clearInterval(interval);
       setUploadProgress(100);
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload fail hua");
+      if (!res.ok) throw new Error(data.error || "Upload failed");
       return data.url;
     } catch (err) {
       clearInterval(interval);
@@ -78,18 +79,17 @@ export default function PostComposer() {
     }
   }
 
-  // Define handleFile BEFORE handleDrop so no reference error
   async function handleFile(file: File) {
     setError("");
     const isImage = file.type.startsWith("image/");
     const isVideo = file.type.startsWith("video/");
     if (!isImage && !isVideo) {
-      setError("Sirf image (JPG, PNG, GIF, WEBP) ya video (MP4, MOV, WEBM) select karo.");
+      setError("Please select an image (JPG, PNG, GIF, WEBP) or a video (MP4, MOV, WEBM).");
       return;
     }
     const sizeMB = file.size / (1024 * 1024);
     if (sizeMB > MAX_FILE_SIZE_MB) {
-      setError(`File bahut badi hai (${sizeMB.toFixed(1)}MB). Max ${MAX_FILE_SIZE_MB}MB allowed hai.`);
+      setError(`File is too large (${sizeMB.toFixed(1)}MB). Max ${MAX_FILE_SIZE_MB}MB allowed.`);
       return;
     }
     const localUrl = URL.createObjectURL(file);
@@ -105,11 +105,10 @@ export default function PostComposer() {
       setUploadState("done");
     } catch (err: any) {
       setUploadState("error");
-      setError(err.message || "Upload fail hua. Dobara try karo.");
+      setError(err.message || "Upload failed. Please try again.");
     }
   }
 
-  // Now handleDrop is defined AFTER handleFile — no issue
   function handleDrop(e: React.DragEvent) {
     e.preventDefault();
     setDragging(false);
@@ -140,7 +139,7 @@ export default function PostComposer() {
     e.preventDefault();
     if (!content.trim() && !media) return;
     if (uploadState === "uploading" || uploadState === "reading") {
-      setError("Thoda ruko — media abhi upload ho rahi hai...");
+      setError("Please wait — media is still uploading...");
       return;
     }
     setError("");
@@ -169,7 +168,7 @@ export default function PostComposer() {
             <span className="font-semibold text-sm" style={{ fontFamily: "'Syne',sans-serif" }}>{currentUser.name}</span>
             <span className="text-xs px-2 py-0.5 rounded-full font-medium"
               style={{ color: bs.color, background: bs.bg, border: `1px solid ${bs.border}` }}>
-              {info.remaining === "unlimited" ? "∞ Unlimited" : info.canPost ? `${info.remaining} posts bachi` : "🔒 Limit"}
+              {info.remaining === "unlimited" ? "∞ Unlimited" : info.canPost ? `${info.remaining} posts left` : "🔒 Limit Reached"}
             </span>
           </div>
           <p className="text-xs mt-0.5" style={{ color: info.canPost ? "var(--accent3)" : "#ff6d8a", fontFamily: "'DM Sans',sans-serif" }}>
@@ -182,7 +181,7 @@ export default function PostComposer() {
       {success && (
         <div className="mb-3 px-4 py-2 rounded-xl text-sm text-center"
           style={{ background: "rgba(109,255,204,0.1)", border: "1px solid rgba(109,255,204,0.3)", color: "var(--accent3)", fontFamily: "'DM Sans',sans-serif" }}>
-          ✅ Post ho gayi aur Cloudinary par save hai!
+          ✅ Posted successfully and saved to Cloudinary!
         </div>
       )}
 
@@ -190,7 +189,7 @@ export default function PostComposer() {
         {/* Textarea */}
         <textarea value={content} onChange={(e) => setContent(e.target.value)}
           disabled={!info.canPost} rows={3}
-          placeholder={info.canPost ? "Kya share karna hai? Likho ya neeche se media add karo..." : "Posting limit khatam — kal aao ya zyada friends banao!"}
+          placeholder={info.canPost ? "What's on your mind? Type here or add media below..." : "Limit reached — come back tomorrow or add more friends!"}
           className="w-full rounded-xl px-4 py-3 text-sm resize-none outline-none transition-all"
           style={{ background: "var(--surface2)", border: "1px solid var(--border)", color: "var(--text)", fontFamily: "'DM Sans',sans-serif", opacity: info.canPost ? 1 : 0.5 }}
           onFocus={(e) => { if (info.canPost) e.target.style.borderColor = "var(--accent)"; }}
@@ -217,10 +216,10 @@ export default function PostComposer() {
                 style={{ background: "rgba(255,109,138,0.15)", border: "1px solid rgba(255,109,138,0.25)" }}>🎬</div>
             </div>
             <p className="text-center font-bold text-sm mb-1" style={{ fontFamily: "'Syne',sans-serif", color: "var(--text)" }}>
-              📱 Gallery se Photo / Video Upload Karo
+              📱 Upload Photo / Video from Gallery
             </p>
             <p className="text-center text-xs" style={{ color: "var(--muted)", fontFamily: "'DM Sans',sans-serif" }}>
-              Tap karo → phone ki gallery khulegi • Cloudinary par save hoga
+              Tap here → your gallery will open • Saves to Cloudinary
             </p>
             <p className="text-center text-xs mt-1" style={{ color: "var(--muted)", fontFamily: "'DM Sans',sans-serif", opacity: 0.6 }}>
               JPG · PNG · GIF · WEBP · MP4 · MOV · WEBM — max 50MB
@@ -247,7 +246,7 @@ export default function PostComposer() {
                 <div className="w-12 h-12 rounded-full border-4 border-t-transparent mb-3"
                   style={{ borderColor: "var(--accent) var(--accent) transparent transparent", animation: "spin 0.8s linear infinite" }} />
                 <p className="text-white text-sm font-semibold mb-3" style={{ fontFamily: "'Syne',sans-serif" }}>
-                  {uploadState === "reading" ? "File read ho rahi hai..." : "Cloudinary par upload ho raha hai..."}
+                  {uploadState === "reading" ? "Reading file..." : "Uploading to Cloudinary..."}
                 </p>
                 <div className="w-48 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.2)" }}>
                   <div className="h-full rounded-full transition-all duration-300"
@@ -261,7 +260,7 @@ export default function PostComposer() {
             {uploadState === "done" && (
               <div className="absolute top-2 left-2 px-2 py-1 rounded-lg"
                 style={{ background: "rgba(109,255,204,0.2)", border: "1px solid rgba(109,255,204,0.4)" }}>
-                <span className="text-xs" style={{ color: "var(--accent3)" }}>☁️ Cloudinary par save hua ✓</span>
+                <span className="text-xs" style={{ color: "var(--accent3)" }}>☁️ Saved to Cloudinary ✓</span>
               </div>
             )}
 
@@ -269,7 +268,7 @@ export default function PostComposer() {
             {uploadState === "error" && (
               <div className="absolute top-2 left-2 px-2 py-1 rounded-lg"
                 style={{ background: "rgba(255,109,138,0.2)", border: "1px solid rgba(255,109,138,0.4)" }}>
-                <span className="text-xs" style={{ color: "#ff6d8a" }}>⚠️ Upload fail</span>
+                <span className="text-xs" style={{ color: "#ff6d8a" }}>⚠️ Upload failed</span>
               </div>
             )}
 
@@ -318,7 +317,7 @@ export default function PostComposer() {
               fontFamily: "'DM Sans',sans-serif",
             }}>
             {media
-              ? isUploading ? "⏳ Upload ho raha hai..."
+              ? isUploading ? "⏳ Uploading..."
               : uploadState === "done" ? `${media.type === "image" ? "🖼️" : "🎬"} Cloudinary ✓`
               : `${media.type === "image" ? "🖼️" : "🎬"} Added`
               : "🖼️🎬 Photo / Video"}
@@ -326,7 +325,7 @@ export default function PostComposer() {
 
           <button type="submit" className="btn-primary text-sm px-6 py-2"
             disabled={!info.canPost || (!content.trim() && !media) || isUploading}>
-            {isUploading ? "Upload ruko..." : "Publish →"}
+            {isUploading ? "Wait for upload..." : "Publish →"}
           </button>
         </div>
       </form>
@@ -334,9 +333,9 @@ export default function PostComposer() {
       {!info.canPost && currentUser.friendIds.length === 0 && (
         <div className="mt-4 p-3 rounded-xl text-xs"
           style={{ background: "rgba(255,109,138,0.06)", border: "1px solid rgba(255,109,138,0.2)" }}>
-          <p className="font-semibold mb-1" style={{ color: "#ff6d8a", fontFamily: "'Syne',sans-serif" }}>🚀 Posting unlock karo</p>
+          <p className="font-semibold mb-1" style={{ color: "#ff6d8a", fontFamily: "'Syne',sans-serif" }}>🚀 Unlock Posting</p>
           <p style={{ color: "var(--muted)", fontFamily: "'DM Sans',sans-serif" }}>
-            <a href="/friends" style={{ color: "var(--accent)" }}>Friends page</a> par jao aur pehla dost banao!
+            Go to the <a href="/friends" style={{ color: "var(--accent)" }}>Friends page</a> and make your first friend!
           </p>
         </div>
       )}
